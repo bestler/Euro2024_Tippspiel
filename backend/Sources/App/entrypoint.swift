@@ -1,6 +1,5 @@
 import Vapor
 import Logging
-
 @main
 enum Entrypoint {
     static func main() async throws {
