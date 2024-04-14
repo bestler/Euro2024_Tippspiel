@@ -1,2 +1,40 @@
-<h1>Admin Panel for Euro 2024 Tippspiel<h1>
-<h3>#(name)<h3>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel for Euro 2024 Tippspiel</title>
+</head>
+<body>
+    <h1>Admin Panel for Euro 2024 Tippspiel<h1>
+    <h2>Matches</h2>
+    <table>
+    <thead>
+        <tr>
+            <th>Start Time</th>
+            <th>Team Home</th>
+            <th>Team Away</th>
+            <th>Result</th>
+        </tr>
+    </thead>
+    <tbody>
+        #for(match in matches):
+            <tr>
+                <td>#date(match.game_starts_at, "dd.MM.yyyy HH:mm")</td>
+                <td>#(match.team_home_name)</td>
+                <td>#(match.team_away_name)</td>
+                <form action="/admin/newStanding" method="post">
+                    <td>
+                        <input type="hidden" name="id" value=#(match.id)>
+                        <input type="number" name="team_home_goals" min="0" max="10" value=#(match.team_home_goals)>:
+                        <input type="number" name="team_away_goals" min="0" max="10" value=#(match.team_away_goals)>
+                        <input type="submit" value="Submit">
+                    </td>
+                    </form
+            </tr>
+        #endfor
+    </tbody>
+    </table>
+</body>
+</html>
+

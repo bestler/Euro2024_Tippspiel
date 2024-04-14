@@ -22,7 +22,9 @@ final class User: Model, Content {
     @Field(key: "created_at")
     var created_at: Date?
 
-    
+    @Children(for: \.$user)
+    var bets: [Bet]
+
     init() {}
 
 
