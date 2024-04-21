@@ -9,9 +9,13 @@ import SwiftUI
 
 @main
 struct check24_tippspielApp: App {
+
+
     var body: some Scene {
+
         WindowGroup {
-            LoginView()
+            MainView()
         }
     }
 }
+

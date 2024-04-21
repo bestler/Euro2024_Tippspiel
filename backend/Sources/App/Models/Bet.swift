@@ -38,3 +38,11 @@ final class Bet: Model, Content{
     var points: Int
 
 }
+
+struct UpdateBetDTO: Codable {
+
+    let id: UUID
+    let goals_home: Int?
+    let goals_away: Int?
+
+}
