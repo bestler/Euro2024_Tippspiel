@@ -8,6 +8,7 @@
 import Foundation
 import Vapor
 import Fluent
+import FluentPostgresDriver
 
 struct AdminController: RouteCollection {
 
@@ -32,7 +33,17 @@ struct AdminController: RouteCollection {
             .set(\.$team_away_goals, to: standing.team_away_goals)
             .filter(\.$id == standing.id!)
             .update()
+        if let match_id = standing.id {
+            try await updatePoints(match_id: match_id, db: req.db)
+        }
+
         return try await index(req: req)
+    }
+
+    private func updatePoints(match_id: UUID, db: Database) async throws {
+        if let postgres = db as? PostgresDatabase {
+            _ = try await postgres.simpleQuery("CALL updatepointsbets('\(match_id.uuidString)')").get()
+        }
     }
 
 }

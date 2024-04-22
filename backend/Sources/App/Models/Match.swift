@@ -11,7 +11,7 @@ import Vapor
 
 final class Match: Model, Content {
 
-    static let schema = "Matches"
+    static let schema = "matches"
 
     @ID(key: .id)
     var id: UUID?

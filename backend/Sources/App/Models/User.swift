@@ -11,7 +11,7 @@ import Vapor
 
 final class User: Model, Content {
 
-    static let schema = "benutzer"
+    static let schema = "users"
 
     @ID(key: .id)
     var id: UUID?

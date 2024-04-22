@@ -11,7 +11,7 @@ import Vapor
 
 final class Bet: Model, Content{
 
-    static let schema = "Bets"
+    static let schema = "bets"
 
     @ID(key: .id)
     var id: UUID?
