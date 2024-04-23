@@ -39,7 +39,7 @@ struct MainView: View {
                     .tabItem {
                         Label("Leaderboard", systemImage: "trophy")
                     }
-                BetView()
+                CommunityLeaderBoardView()
                     .tabItem {
                         Label("Community", systemImage: "person.3")
                     }

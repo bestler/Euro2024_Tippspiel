@@ -18,6 +18,9 @@ struct UserController: RouteCollection {
         user.get(":id", use: getUser)
         user.get( "validate",":name", use: validate)
         user.get(":id", "bets", use: getBets)
+        user.get(":id", "communities", use: getCommunities)
+        user.post(":user_id", "joinCommunity", ":community_id", use: joinCommunity)
+        user.post(":user_id", "joinCommunityByName", ":community_name", use: joinCommunityByName)
         user.post(use: create)
     }
 
@@ -81,6 +84,70 @@ struct UserController: RouteCollection {
         if let postgres = db as? PostgresDatabase {
             _ = try await postgres.simpleQuery("CALL createBetsForUser('\(userID.uuidString)')").get()
         }
+    }
+
+    
+    @Sendable
+    func joinCommunity(req: Request) async throws -> HTTPStatus {
+
+        //TODO: Implement limit (user can only join up to 5 groups)
+
+        guard let user_id = req.parameters.get("user_id") else { throw Abort(.notFound) }
+        guard let community_id = req.parameters.get("community_id") else { throw Abort(.notFound) }
+
+        let community_uuid = UUID(uuidString: community_id)!
+        let user_uuid = UUID(uuidString: user_id)!
+
+        let userCommunity = User_Community()
+        userCommunity.$user.id = user_uuid
+        userCommunity.$community.id = community_uuid
+
+
+        try await userCommunity.save(on: req.db)
+
+        return .ok
+    }
+
+
+    @Sendable 
+    func joinCommunityByName(req: Request) async throws -> HTTPStatus {
+
+        //TODO: Implement limit (user can only join up to 5 groups)
+
+        guard let user_id = req.parameters.get("user_id") else { throw Abort(.notFound) }
+        guard let community_name = req.parameters.get("community_name") else { throw Abort(.notFound) }
+
+        let community = try await Community.query(on: req.db)
+            .filter(\.$name == community_name)
+            .first()
+
+        guard let community  else { throw Abort(.notFound) }
+
+
+        let user_uuid = UUID(uuidString: user_id)!
+
+        let userCommunity = User_Community()
+        userCommunity.$user.id = user_uuid
+        userCommunity.$community.id = community.id!
+
+        try await userCommunity.save(on: req.db)
+
+        return .ok
+
+    }
+
+    @Sendable
+    func getCommunities(req: Request) async throws -> [Community] {
+
+        guard let id = UUID(uuidString: req.parameters.get("id")!) else { throw Abort(.notFound) }
+
+        let user_community = try await User_Community.query(on: req.db)
+            .filter(\.$user.$id == id)
+            .with(\.$community)
+            .all()
+
+        return user_community.map{return $0.community}
+
     }
 
 
