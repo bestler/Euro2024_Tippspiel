@@ -35,7 +35,7 @@ struct MainView: View {
                     .tabItem {
                         Label("Bets", systemImage: "sportscourt")
                     }
-                BetView()
+                GlobalLeaderboardView()
                     .tabItem {
                         Label("Leaderboard", systemImage: "trophy")
                     }
