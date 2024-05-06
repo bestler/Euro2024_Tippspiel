@@ -25,6 +25,9 @@ final class User: Model, Content {
     @Children(for: \.$user)
     var bets: [Bet]
 
+    @Siblings(through: User_Friend.self, from: \.$user, to: \.$user)
+    var friends: [User]
+
     @Siblings(through: User_Community.self, from: \.$user, to: \.$community)
     var communities: [Community]
 

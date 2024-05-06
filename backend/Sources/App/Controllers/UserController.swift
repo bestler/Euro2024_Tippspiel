@@ -19,8 +19,12 @@ struct UserController: RouteCollection {
         user.get( "validate",":name", use: validate)
         user.get(":id", "bets", use: getBets)
         user.get(":id", "communities", use: getCommunities)
+        
+        user.post(":user_id", "addFriend", ":friend_id", use: addFriend)
+
         user.post(":user_id", "joinCommunity", ":community_id", use: joinCommunity)
         user.post(":user_id", "joinCommunityByName", ":community_name", use: joinCommunityByName)
+
         user.post(use: create)
     }
 
@@ -147,6 +151,26 @@ struct UserController: RouteCollection {
             .all()
 
         return user_community.map{return $0.community}
+
+    }
+
+
+    @Sendable
+    func addFriend(req: Request) async throws -> User_Friend {
+
+        guard let user_id = req.parameters.get("user_id") else { throw Abort(.notFound) }
+        guard let friend_id = req.parameters.get("friend_id") else { throw Abort(.notFound) }
+
+        guard let user_uuid = UUID(uuidString: user_id), let friend_uuid = UUID(uuidString: friend_id) else {throw Abort(.custom(code: 500, reasonPhrase: "No UUID provided"))}
+
+        let user_friend = User_Friend()
+
+        user_friend.$user.id = user_uuid
+        user_friend.$friend.id = friend_uuid
+
+        try await user_friend.create(on: req.db)
+
+        return user_friend
 
     }
 

@@ -29,15 +29,20 @@ final class GlobalLeaderboardEntry: Model, Content {
     @Field(key: "row")
     var row: Int
 
+    @Field(key: "isfriend")
+    var isfriend: Bool
+
     @Parent(key: "id")
     var user: User
+
+
 
     static func getDefaultForUser(id: UUID, db: Database) async throws -> [GlobalLeaderboardEntry] {
         
         var result: [GlobalLeaderboardEntry] = []
 
         if let sqldb = db as? SQLDatabase {
-            let queryString = #"SELECT * FROM defaultGlobalLeaderBoardForUser('\#(id.uuidString)')"#
+            let queryString = #"SELECT * FROM leaderBoardforuser('\#(id.uuidString)')"#
             let query = SQLQueryString(queryString)
             result = try await sqldb.raw(query).all(decoding: GlobalLeaderboardEntry.self)
         }
@@ -51,7 +56,7 @@ final class GlobalLeaderboardEntry: Model, Content {
         var result: [GlobalLeaderboardEntry] = []
 
         if let sqldb = db as? SQLDatabase {
-            let queryString = #"SELECT * FROM refetchGlobalLeaderBoardForUser('\#(id)', \#(refetchParams.numTopRows), \#(refetchParams.lowerBound), \#(refetchParams.upperBound))"#
+            let queryString = #"SELECT * FROM refetchLeaderBoardForUser('\#(id)', \#(refetchParams.numTopRows), \#(refetchParams.lowerBound), \#(refetchParams.upperBound))"#
             let query = SQLQueryString(queryString)
             result = try await sqldb.raw(query).all(decoding: GlobalLeaderboardEntry.self)
         }

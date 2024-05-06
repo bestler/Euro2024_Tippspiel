@@ -39,11 +39,18 @@ struct GlobalLeaderboardView: View {
                     }
 
                     ForEach(leaderboardVM.leaderBoardEntries) { entry in
+
                         if entry.row == leaderboardVM.curUp && leaderboardVM.showMoreBottonUp {
                             ShowMoreButton(isUp: true, action: leaderboardVM.refetchData)
                         }
 
                         GlobalLeaderboardRow(entry: entry)
+                            .onTapGesture {
+                                leaderboardVM.addFriend(friendId: entry.id)
+                            }
+                            .listRowBackground(
+                                BackgroundColor(entry: entry, rowUser: leaderboardVM.rowOfUser ?? -1, rowLast: leaderboardVM.lastRow ?? -1)
+                            )
 
                         if entry.row == leaderboardVM.curDown && leaderboardVM.showMoreButtonDown {
                             ShowMoreButton(isUp: false, action: leaderboardVM.refetchData)
@@ -78,7 +85,9 @@ struct GlobalLeaderboardView: View {
 
 }
 
+
 struct ShowMoreButton: View {
+
 
     let isUp: Bool
     let action: (Bool) -> Void
@@ -100,6 +109,27 @@ struct ShowMoreButton: View {
 
 }
 
+struct BackgroundColor: View {
+
+    //TODO: Nicer colors
+    let entry: GlobalLeaderboardEntry
+    let rowUser: Int
+    let rowLast: Int
+
+    var body: some View {
+        if entry.isfriend {
+            Color.yellow
+        } else if entry.row <= 3 {
+            Color.green
+        } else if entry.row == rowUser {
+            Color.blue
+        } else if entry.row == rowLast {
+            Color.red
+        } else {
+            Color(uiColor: UIColor.secondarySystemGroupedBackground)
+        }
+    }
+}
 
 
 #Preview {

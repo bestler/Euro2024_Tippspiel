@@ -16,6 +16,7 @@ class GlobalLeaderboardVM {
     var rowOfUser : Int?
     var curUp: Int?
     var curDown = 3
+    var lastRow: Int?
 
     var leaderBoardEntries: [GlobalLeaderboardEntry]
     private var leaderboardEntriesDict: [Int:GlobalLeaderboardEntry]
@@ -31,13 +32,12 @@ class GlobalLeaderboardVM {
 
     func loadEntries() {
 
-        let url = URL(string: "http://localhost:8080/globalleaderboard/45ec5e7e-93e7-4c7a-8b44-25591ef66840")!
+        let url = URL(string: "http://localhost:8080/globalleaderboard/92ffea16-848c-45fc-887b-7a713203caf9")!
         let request = URLRequest(url: url)
 
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
 
             var statusCode = 500
-
             if let response {
                 statusCode = (response as! HTTPURLResponse).statusCode
             } else {
@@ -48,7 +48,6 @@ class GlobalLeaderboardVM {
                 print("Error with statusCode \(statusCode)")
                 return
             }
-
             do {
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .iso8601
@@ -60,11 +59,8 @@ class GlobalLeaderboardVM {
             } catch {
                 print(error)
             }
-
         }
-
         task.resume()
-
     }
 
     func refetchData(isButtonPressedUp: Bool) {
@@ -77,9 +73,7 @@ class GlobalLeaderboardVM {
             curDown += selectedPaginationSize
         }
 
-        var components = URLComponents(string: "http://localhost:8080/globalleaderboard/45ec5e7e-93e7-4c7a-8b44-25591ef66840/refetch")!
-
-
+        var components = URLComponents(string: "http://localhost:8080/globalleaderboard/92ffea16-848c-45fc-887b-7a713203caf9/refetch")!
 
         components.queryItems = [
             URLQueryItem(name: "numTopRows", value: String(curDown)),
@@ -123,6 +117,33 @@ class GlobalLeaderboardVM {
         task.resume()
     }
 
+    func addFriend(friendId: UUID) {
+
+        //TODO: Check with actual logged in user
+        guard friendId != UUID(uuidString: "92ffea16-848c-45fc-887b-7a713203caf9") else {return}
+
+        let url = URL(string: "http://localhost:8080/users/92ffea16-848c-45fc-887b-7a713203caf9/addFriend/\(friendId)")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+
+            var statusCode = 500
+            if let response {
+                statusCode = (response as! HTTPURLResponse).statusCode
+            } else {
+                return
+            }
+
+            guard statusCode == 200 && data != nil else {
+                print("Error with statusCode \(statusCode)")
+                return
+            }
+            print("Friend added sucessfully")
+        }
+        task.resume()
+    }
+
 
     private func evaluatePossiblePosUpDown() {
 
@@ -137,25 +158,25 @@ class GlobalLeaderboardVM {
         } else {
             showMoreButtonDown = false
         }
-
     }
 
     private func findUserRow(entriesDTO: LeaderBoardDTO) {
+
         for entry in entriesDTO.items {
             leaderboardEntriesDict[entry.row] = entry
-            if entry.id == UUID(uuidString: "45ec5e7e-93e7-4c7a-8b44-25591ef66840")! {
+            if entry.id == UUID(uuidString: "92ffea16-848c-45fc-887b-7a713203caf9")! {
                 rowOfUser = entry.row
                 curUp = entry.row
             }
         }
-
     }
 
     private func processLoadedEntries (entriesDTO: LeaderBoardDTO){
 
         leaderBoardEntries = entriesDTO.items
+        //Array is sorted, so last element is last row
+        lastRow = leaderBoardEntries[leaderBoardEntries.count - 1].row
         totalCount = entriesDTO.totalCount
     }
-
 
 }

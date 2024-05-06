@@ -24,5 +24,5 @@ struct GlobalLeaderboardRow: View {
 }
 
 #Preview {
-    GlobalLeaderboardRow(entry: GlobalLeaderboardEntry(id: UUID(), rank: 1, name: "Simon", points: 100, row: 1))
+    GlobalLeaderboardRow(entry: GlobalLeaderboardEntry(id: UUID(), rank: 1, name: "Simon", points: 100, row: 1, isfriend: false))
 }

@@ -14,7 +14,7 @@ struct GlobalLeaderboardEntry: Identifiable, Codable {
     let name: String
     let points: Int
     let row: Int
-
+    let isfriend: Bool
 }
 
 struct LeaderBoardDTO: Codable {
