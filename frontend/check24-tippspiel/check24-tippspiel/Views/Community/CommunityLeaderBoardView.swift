@@ -12,12 +12,7 @@ struct CommunityLeaderBoardView: View {
     @State private var selectedCommunity: Community?
     @State private var showJoinCreateSheet = false
 
-    @State var communityVM = CommunityVM()
-
-    let communities = [
-        Community(id: UUID(), created_at: Date(), name: "SE-Elite"),
-        Community(id: UUID(), created_at: Date(), name: "Tipper")
-    ]
+    @State var communityVM = CommunityLeaderboardVM()
 
 
     var body: some View {
@@ -42,14 +37,17 @@ struct CommunityLeaderBoardView: View {
                             Text(community.name).tag(Optional(community))
                         }
                     }
+                    LeaderboardView(communityLeaderboardBM: $communityVM)
                 }
             }
-            .padding()
+            .background(Color(UIColor.systemGroupedBackground))
             .onAppear{
                 communityVM.loadCommunities()
             }
-            .sheet(isPresented: $showJoinCreateSheet, content: {
-                CreateJoinCommunityView(communityVM: $communityVM)
+            .sheet(isPresented: $showJoinCreateSheet, onDismiss: {
+                communityVM.loadCommunities()
+            }, content: {
+                CreateJoinCommunityView()
             })
             Spacer()
             .navigationTitle("Community")

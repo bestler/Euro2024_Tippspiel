@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CreateJoinCommunityView: View {
 
-    @Binding var communityVM: CommunityVM
+    @State private var joinCommunityVM = JoinCommunityVM()
     @Environment(\.dismiss) private var dismiss
 
 
@@ -19,18 +19,18 @@ struct CreateJoinCommunityView: View {
                 Section(
                     header: Text("Create Community"),
                     footer: Text("Create a new community. Share the name with you friends. Have fun together!")) {
-                        TextField("Community name", text: $communityVM.createCommunityName)
+                        TextField("Community name", text: $joinCommunityVM.createCommunityName)
                     Button("Create", action: {
-                        communityVM.createCommunity()
+                        joinCommunityVM.createCommunity()
                         dismiss()
                     })
                 }
                 Section(
                     header: Text("Join Community"),
                     footer: Text("Join a community to see results from your friends and compare your results!")){
-                        TextField("Community Name", text: $communityVM.joinCommunityName)
+                        TextField("Community Name", text: $joinCommunityVM.joinCommunityName)
                         Button("Join", action: {
-                            communityVM.joinCommunity()
+                            joinCommunityVM.joinCommunity()
                             dismiss()
                         })
                     }
@@ -41,7 +41,7 @@ struct CreateJoinCommunityView: View {
                 .toolbar{
                     ToolbarItem(placement: .primaryAction) {
                         Button(action: {
-
+                            dismiss()
                         }, label: {
                             Label("Close", systemImage: "plus")
                                 .labelStyle(.titleOnly)
@@ -54,5 +54,5 @@ struct CreateJoinCommunityView: View {
 }
 
 #Preview {
-    CreateJoinCommunityView(communityVM: .constant(CommunityVM()))
+    CreateJoinCommunityView()
 }

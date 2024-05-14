@@ -24,56 +24,45 @@ struct GlobalLeaderboardController: RouteCollection {
 
 
     @Sendable
-    func getLeaderboard(req: Request) async throws -> GlobalLeaderboardDTO {
+    func getLeaderboard(req: Request) async throws -> [LeaderBoardEntry] {
 
-        let totalCount = try await GlobalLeaderboardEntry.query(on: req.db).count()
-        let entries = try await GlobalLeaderboardEntry.query(on: req.db).all()
-        let leaderBoardDTO = GlobalLeaderboardDTO(items: entries, totalCount: totalCount)
-
-        return leaderBoardDTO
+        return try await LeaderBoardEntry.query(on: req.db).all()
     }
 
 
     @Sendable
-    func getLeaderboardForUser(req: Request) async throws -> GlobalLeaderboardDTO {
+    func getLeaderboardForUser(req: Request) async throws -> [LeaderBoardEntry] {
 
-
-        let totalCount = try await GlobalLeaderboardEntry.query(on: req.db).count()
         guard let userId = UUID(uuidString: req.parameters.get("user_id")!) else { throw Abort(.notFound) }
-        let entries = try await GlobalLeaderboardEntry.getDefaultForUser(id: userId, db: req.db)
-        let leaderBoardDTO = GlobalLeaderboardDTO(items: entries, totalCount: totalCount)
-
-        return leaderBoardDTO
+        let entries = try await LeaderBoardEntry.getGlobalLeaderboardForUser(id: userId, db: req.db)
+        return entries
 
     }
 
     @Sendable
-    func refetchLeaderBoardForUser(req: Request) async throws -> GlobalLeaderboardDTO {
+    func refetchLeaderBoardForUser(req: Request) async throws -> [LeaderBoardEntry] {
 
-        let totalCount = try await GlobalLeaderboardEntry.query(on: req.db).count()
         guard let userId = UUID(uuidString: req.parameters.get("user_id")!) else { throw Abort(.notFound) }
-        var refetchParams = RefetchGlobalLeaderBoardDTO()
+        var refetchParams = RefetchLeaderBoardDTO()
 
         do {
-            refetchParams = try req.query.decode(RefetchGlobalLeaderBoardDTO.self)
+            refetchParams = try req.query.decode(RefetchLeaderBoardDTO.self)
         } catch {
             throw Abort(.badRequest)
         }
 
-        let entries = try await GlobalLeaderboardEntry.refetchForUser(id: userId, refetchParams: refetchParams, db: req.db)
-        let leaderBoardDTO = GlobalLeaderboardDTO(items: entries, totalCount: totalCount)
-
-        return leaderBoardDTO
+        let entries = try await LeaderBoardEntry.refetchGlobalLeaderboardForUser(id: userId, refetchParams: refetchParams, db: req.db)
+        return entries
 
     }
 
 
     @Sendable
-    func searchForUser(req: Request) async throws -> [GlobalLeaderboardEntry] {
+    func searchForUser(req: Request) async throws -> [LeaderBoardEntry] {
         
         guard var username = req.parameters.get("user_name") else { throw Abort(.notFound) }
         username = username.lowercased()
-        let entries = try await GlobalLeaderboardEntry.query(on: req.db).filter(\.$name ~~ username).all()
+        let entries = try await LeaderBoardEntry.query(on: req.db).filter(\.$name ~~ username).all()
 
         return entries
 

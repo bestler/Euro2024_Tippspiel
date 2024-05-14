@@ -1,5 +1,5 @@
 //
-//  GlobalLeaderboardVM.swift
+//  LeaderboardVM.swift
 //  check24-tippspiel
 //
 //  Created by Simon Bestler on 23.04.24.
@@ -8,7 +8,7 @@
 import Foundation
 
 @Observable
-class GlobalLeaderboardVM {
+class LeaderboardVM {
 
     var selectedPaginationSize: Int = 10
     var showMoreBottonUp = false
@@ -17,22 +17,14 @@ class GlobalLeaderboardVM {
     var curUp: Int?
     var curDown = 3
     var lastRow: Int?
+    var leaderBoardEntries = [GlobalLeaderboardEntry]()
 
-    var leaderBoardEntries: [GlobalLeaderboardEntry]
-    private var leaderboardEntriesDict: [Int:GlobalLeaderboardEntry]
-    private var totalCount = 0
-
-
-    init() {
-        self.leaderboardEntriesDict = [:]
-        self.leaderBoardEntries = []
-    }
-
-
+    var loadURL = "http://localhost:8080/globalleaderboard/92ffea16-848c-45fc-887b-7a713203caf9"
+    var refetchURL = "http://localhost:8080/globalleaderboard/92ffea16-848c-45fc-887b-7a713203caf9/refetch"
 
     func loadEntries() {
 
-        let url = URL(string: "http://localhost:8080/globalleaderboard/92ffea16-848c-45fc-887b-7a713203caf9")!
+        let url = URL(string: loadURL)!
         let request = URLRequest(url: url)
 
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
@@ -52,9 +44,9 @@ class GlobalLeaderboardVM {
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .iso8601
 
-                let decodedData = try decoder.decode(LeaderBoardDTO.self, from: data!)
-                self.processLoadedEntries(entriesDTO: decodedData)
-                self.findUserRow(entriesDTO: decodedData)
+                let decodedData = try decoder.decode([GlobalLeaderboardEntry].self, from: data!)
+                self.processLoadedEntries(entries: decodedData)
+                self.findUserRow(entries: decodedData)
                 self.evaluatePossiblePosUpDown()
             } catch {
                 print(error)
@@ -63,17 +55,15 @@ class GlobalLeaderboardVM {
         task.resume()
     }
 
-    func refetchData(isButtonPressedUp: Bool) {
 
-        guard rowOfUser != nil, curUp != nil else {return}
+    func handleShowMoreButton(isButtonPressedUp: Bool) {
+        
+        recalculateCursorPos(isButtonPressedUp: isButtonPressedUp)
+        refetchData()
+    }
 
-        if isButtonPressedUp {
-            self.curUp! -= selectedPaginationSize
-        } else {
-            curDown += selectedPaginationSize
-        }
-
-        var components = URLComponents(string: "http://localhost:8080/globalleaderboard/92ffea16-848c-45fc-887b-7a713203caf9/refetch")!
+    func refetchData() {
+        var components = URLComponents(string: refetchURL)!
 
         components.queryItems = [
             URLQueryItem(name: "numTopRows", value: String(curDown)),
@@ -104,8 +94,8 @@ class GlobalLeaderboardVM {
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .iso8601
 
-                let decodedData = try decoder.decode(LeaderBoardDTO.self, from: data!)
-                self.processLoadedEntries(entriesDTO: decodedData)
+                let decodedData = try decoder.decode([GlobalLeaderboardEntry].self, from: data!)
+                self.processLoadedEntries(entries: decodedData)
                 self.evaluatePossiblePosUpDown()
 
             } catch {
@@ -115,6 +105,7 @@ class GlobalLeaderboardVM {
         }
 
         task.resume()
+
     }
 
     func addFriend(friendId: UUID) {
@@ -144,8 +135,18 @@ class GlobalLeaderboardVM {
         task.resume()
     }
 
+    func recalculateCursorPos(isButtonPressedUp: Bool) {
+        guard rowOfUser != nil, curUp != nil else {return}
 
-    private func evaluatePossiblePosUpDown() {
+        if isButtonPressedUp {
+            self.curUp! -= selectedPaginationSize
+        } else {
+            curDown += selectedPaginationSize
+        }
+    }
+
+
+    func evaluatePossiblePosUpDown() {
 
         if let curUp, curUp > curDown + 1 {
             showMoreBottonUp = true
@@ -160,10 +161,9 @@ class GlobalLeaderboardVM {
         }
     }
 
-    private func findUserRow(entriesDTO: LeaderBoardDTO) {
+    func findUserRow(entries: [GlobalLeaderboardEntry]) {
 
-        for entry in entriesDTO.items {
-            leaderboardEntriesDict[entry.row] = entry
+        for entry in entries {
             if entry.id == UUID(uuidString: "92ffea16-848c-45fc-887b-7a713203caf9")! {
                 rowOfUser = entry.row
                 curUp = entry.row
@@ -171,12 +171,13 @@ class GlobalLeaderboardVM {
         }
     }
 
-    private func processLoadedEntries (entriesDTO: LeaderBoardDTO){
+    func processLoadedEntries (entries: [GlobalLeaderboardEntry]){
 
-        leaderBoardEntries = entriesDTO.items
+        leaderBoardEntries = entries
         //Array is sorted, so last element is last row
-        lastRow = leaderBoardEntries[leaderBoardEntries.count - 1].row
-        totalCount = entriesDTO.totalCount
+        if leaderBoardEntries.count > 0 {
+            lastRow = leaderBoardEntries[leaderBoardEntries.count - 1].row
+        }
     }
 
 }

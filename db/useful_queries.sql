@@ -35,3 +35,8 @@ WHERE row IN (
     SELECT MAX(row) FROM globalleaderboard
 )
 ORDER BY rank;
+
+
+-- Put all existing users in a community
+INSERT INTO user_community(user_id, community_id)
+SELECT id, '87c9351e-87d1-4111-baac-7d1b1545217c' FROM users

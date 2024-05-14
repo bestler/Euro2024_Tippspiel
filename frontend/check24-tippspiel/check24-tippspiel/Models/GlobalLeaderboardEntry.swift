@@ -17,11 +17,13 @@ struct GlobalLeaderboardEntry: Identifiable, Codable {
     let isfriend: Bool
 }
 
+/*
 struct LeaderBoardDTO: Codable {
 
     let items: [GlobalLeaderboardEntry]
     let totalCount: Int
 
 }
+ */
 
 
