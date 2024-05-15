@@ -46,7 +46,11 @@ struct GlobalLeaderboardSearch: View {
 
 
     private func searchOnLeaderboard() {
-        let url = URL(string: "http://localhost:8080/globalleaderboard/search/\(searchText)")!
+
+        var components = Settings.getBaseURLComponents()
+        components.path = "/globalleaderboard/search/\(searchText)"
+
+        let url = components.url!
         let request = URLRequest(url: url)
 
 
@@ -85,10 +89,12 @@ struct GlobalLeaderboardSearch: View {
 
     func addFriend(friendId: UUID) {
 
-        //TODO: Check with actual logged in user
-        guard friendId != UUID(uuidString: "92ffea16-848c-45fc-887b-7a713203caf9") else {return}
+        guard let userID = Settings.getUserID() else {return}
+        guard friendId != userID else {return}
 
-        let url = URL(string: "http://localhost:8080/users/92ffea16-848c-45fc-887b-7a713203caf9/addFriend/\(friendId)")!
+        var components = Settings.getBaseURLComponents()
+        components.path = "/users/\(userID)/addFriend/\(friendId)"
+        let url = components.url!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
 
@@ -109,6 +115,7 @@ struct GlobalLeaderboardSearch: View {
         }
         task.resume()
     }
+
 }
 
 #Preview {

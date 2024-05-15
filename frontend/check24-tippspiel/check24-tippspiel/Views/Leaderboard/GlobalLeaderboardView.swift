@@ -48,20 +48,19 @@ struct GlobalLeaderboardView: View {
 
 struct BackgroundColor: View {
 
-    //TODO: Nicer colors
     let entry: GlobalLeaderboardEntry
     let rowUser: Int
     let rowLast: Int
 
     var body: some View {
         if entry.row == rowUser {
-            Color.blue
+            Color("BackgroundBlue")
         } else if entry.isfriend {
-            Color.yellow
+            Color("BackgroundYellow")
         } else if entry.row <= 3 {
-            Color.green
+            Color("BackgroundGreen")
         } else if entry.row == rowLast {
-            Color.red
+            Color("BackgroundRed")
         } else {
             Color(uiColor: UIColor.secondarySystemGroupedBackground)
         }

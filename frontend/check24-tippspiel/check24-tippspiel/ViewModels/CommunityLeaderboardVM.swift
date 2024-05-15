@@ -31,7 +31,12 @@ class CommunityLeaderboardVM: LeaderboardVM {
 
     func loadCommunities() {
 
-        let url = URL(string: "http://localhost:8080/users/92ffea16-848c-45fc-887b-7a713203caf9/communities")!
+        var components = Settings.getBaseURLComponents()
+
+        guard let userID = Settings.getUserID() else {return}
+        components.path = "/users/\(userID)/communities"
+
+        let url = components.url!
         let request = URLRequest(url: url)
 
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
@@ -61,9 +66,17 @@ class CommunityLeaderboardVM: LeaderboardVM {
     }
 
     func updateURLS(newCommunity: String) {
-        //TODO: Real user
-        self.refetchURL = "http://localhost:8080/communities/\(newCommunity)/leaderboard/92ffea16-848c-45fc-887b-7a713203caf9"
-        self.loadURL = "http://localhost:8080/communities/\(newCommunity)/leaderboard/92ffea16-848c-45fc-887b-7a713203caf9"
+
+        guard let userID = Settings.getUserID() else {return}
+        
+        var loadComponents = Settings.getBaseURLComponents()
+        loadComponents.path = "/communities/\(newCommunity)/leaderboard/\(userID)"
+
+        var refetchComponents = Settings.getBaseURLComponents()
+        refetchComponents.path = "/communities/\(newCommunity)/refetchLeaderboard/\(userID)"
+
+        self.loadURL = loadComponents.url!.absoluteString
+        self.refetchURL = refetchComponents.url!.absoluteString
     }
 
 

@@ -23,43 +23,44 @@ struct LeaderboardView<LeaderBoardType>: View where LeaderBoardType: Leaderboard
 
 
     var body: some View {
-
-        HStack {
-            Text("Pagination Size:")
-            Picker("Pagination", selection: $leaderboardVM.selectedPaginationSize){
-                ForEach(paginationSizes, id: \.self) {size in
-                    Text(String(size)).tag(size)
-                }
-            }
-        }
-        List() {
+        NavigationStack {
             HStack {
-                Text("Rank")
-                    .bold()
-                Spacer()
-                Text("Name")
-                    .bold()
-                Spacer()
-                Text("Points")
-                    .bold()
-            }
-
-            ForEach(leaderboardVM.leaderBoardEntries) { entry in
-
-                if entry.row == leaderboardVM.curUp && leaderboardVM.showMoreBottonUp {
-                    ShowMoreButton(isUp: true, action: leaderboardVM.handleShowMoreButton)
-                }
-
-                GlobalLeaderboardRow(entry: entry)
-                    .onTapGesture {
-                        leaderboardVM.addFriend(friendId: entry.id)
+                Text("Pagination Size:")
+                Picker("Pagination", selection: $leaderboardVM.selectedPaginationSize){
+                    ForEach(paginationSizes, id: \.self) {size in
+                        Text(String(size)).tag(size)
                     }
-                    .listRowBackground(
-                        BackgroundColor(entry: entry, rowUser: leaderboardVM.rowOfUser ?? -1, rowLast: leaderboardVM.lastRow ?? -1)
-                    )
-
-                if entry.row == leaderboardVM.curDown && leaderboardVM.showMoreButtonDown {
-                    ShowMoreButton(isUp: false, action: leaderboardVM.handleShowMoreButton)
+                }
+            }
+            List() {
+                HStack {
+                    Text("Rank")
+                        .bold()
+                    Spacer()
+                    Text("Name")
+                        .bold()
+                    Spacer()
+                    Text("Points")
+                        .bold()
+                }
+                
+                ForEach(leaderboardVM.leaderBoardEntries) { entry in
+                    
+                    if entry.row == leaderboardVM.curUp && leaderboardVM.showMoreBottonUp {
+                        ShowMoreButton(isUp: true, action: leaderboardVM.handleShowMoreButton)
+                    }
+                    
+                    GlobalLeaderboardRow(entry: entry)
+                        .onTapGesture {
+                            leaderboardVM.addFriend(friendId: entry.id)
+                        }
+                        .listRowBackground(
+                            BackgroundColor(entry: entry, rowUser: leaderboardVM.rowOfUser ?? -1, rowLast: leaderboardVM.lastRow ?? -1)
+                        )
+                    
+                    if entry.row == leaderboardVM.curDown && leaderboardVM.showMoreButtonDown {
+                        ShowMoreButton(isUp: false, action: leaderboardVM.handleShowMoreButton)
+                    }
                 }
             }
         }

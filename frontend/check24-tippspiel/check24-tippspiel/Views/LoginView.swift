@@ -11,8 +11,8 @@ struct LoginView: View {
 
     @Environment(\.dismiss) var dismiss
 
-    @State private var username = ""
-
+    @State private var username_register = ""
+    @State private var username_login = ""
 
     var body: some View {
         NavigationStack {
@@ -20,13 +20,17 @@ struct LoginView: View {
                 Section(
                     header: Text("Create a new account"),
                     footer: Text("The username should be unique and you can login with only rembering your username")) {
-                    TextField("Username", text: $username)
+                    TextField("Username", text: $username_register)
+                            .autocorrectionDisabled()
+                            .textInputAutocapitalization(.never)
                     Button("Register", action: registerNewAccount)
                 }
                 Section(
                     header: Text("Login"),
                     footer: Text("Simply put your username and press login to get started")){
-                        TextField("Username", text: $username)
+                        TextField("Username", text: $username_login)
+                            .autocorrectionDisabled()
+                            .textInputAutocapitalization(.never)
                         Button("Login", action: loginToAccount)
                     }
 
@@ -37,9 +41,12 @@ struct LoginView: View {
     }
 
     func registerNewAccount() {
-        let body = "{\"name\": \"\(username)\"}"
-        let url = URL(string: "http://localhost:8080/user")!
-        var request = URLRequest(url: url)
+        let body = "{\"name\": \"\(username_register)\"}"
+
+        var components = Settings.getBaseURLComponents()
+        components.path = "/users"
+
+        var request = URLRequest(url: components.url!)
         request.httpMethod = "POST"
         let data = body.data(using: .utf8)!
         request.httpBody = data
@@ -47,7 +54,6 @@ struct LoginView: View {
         print(body)
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             
-            //TODO Error handling
             if let error {
                 print(error)
                 return
@@ -81,12 +87,44 @@ struct LoginView: View {
 
     private func writeToAppStorage(id: UUID) {
         UserDefaults.standard.setValue(id.uuidString, forKey: "userID")
-        print(Array(UserDefaults.standard.dictionaryRepresentation()))
         dismiss()
     }
 
     func loginToAccount() {
-        //TODO: Implementation
+
+        var components = Settings.getBaseURLComponents()
+        components.path = "/users/validate/\(username_login)"
+
+        let request = URLRequest(url: components.url!)
+
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+
+            var statusCode = 500
+            if let response {
+                statusCode = (response as! HTTPURLResponse).statusCode
+            } else {
+                return
+            }
+
+            guard statusCode == 200 && data != nil else {
+                print("Error with statusCode \(statusCode)")
+                return
+            }
+            do {
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .iso8601
+
+                let user = try decoder.decode(User.self, from: data!)
+                if let id = user.id {
+                    writeToAppStorage(id: id)
+                }
+
+
+            } catch {
+                print(error)
+            }
+        }
+        task.resume()
     }
 }
 

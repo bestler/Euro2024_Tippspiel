@@ -21,7 +21,6 @@ struct UserController: RouteCollection {
         user.get(":id", "communities", use: getCommunities)
         
         user.post(":user_id", "addFriend", ":friend_id", use: addFriend)
-
         user.post(":user_id", "joinCommunity", ":community_id", use: joinCommunity)
         user.post(":user_id", "joinCommunityByName", ":community_name", use: joinCommunityByName)
 
@@ -94,8 +93,6 @@ struct UserController: RouteCollection {
     @Sendable
     func joinCommunity(req: Request) async throws -> HTTPStatus {
 
-        //TODO: Implement limit (user can only join up to 5 groups)
-
         guard let user_id = req.parameters.get("user_id") else { throw Abort(.notFound) }
         guard let community_id = req.parameters.get("community_id") else { throw Abort(.notFound) }
 
@@ -116,8 +113,6 @@ struct UserController: RouteCollection {
     @Sendable 
     func joinCommunityByName(req: Request) async throws -> HTTPStatus {
 
-        //TODO: Implement limit (user can only join up to 5 groups)
-
         guard let user_id = req.parameters.get("user_id") else { throw Abort(.notFound) }
         guard let community_name = req.parameters.get("community_name") else { throw Abort(.notFound) }
 
@@ -126,7 +121,6 @@ struct UserController: RouteCollection {
             .first()
 
         guard let community  else { throw Abort(.notFound) }
-
 
         let user_uuid = UUID(uuidString: user_id)!
 
@@ -137,7 +131,6 @@ struct UserController: RouteCollection {
         try await userCommunity.save(on: req.db)
 
         return .ok
-
     }
 
     @Sendable
@@ -153,7 +146,6 @@ struct UserController: RouteCollection {
         return user_community.map{return $0.community}
 
     }
-
 
     @Sendable
     func addFriend(req: Request) async throws -> User_Friend {
@@ -173,7 +165,5 @@ struct UserController: RouteCollection {
         return user_friend
 
     }
-
-
 
 }

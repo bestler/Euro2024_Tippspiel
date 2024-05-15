@@ -45,11 +45,11 @@ struct BetController: RouteCollection {
             let id = bet.id
             let dbBet = try await Bet.query(on: req.db)
                 .filter(\.$id == id)
+                .with(\.$match)
                 .first()
 
-            //TODO: Check if game has already started
-            
-            if let dbBet {
+            //Make sure that you can only update bets from games that did not already start
+            if let dbBet, dbBet.match.game_starts_at > Date() {
                 dbBet.goals_home = bet.goals_home
                 dbBet.goals_away = bet.goals_away
                 dbBet.modified_at = Date()

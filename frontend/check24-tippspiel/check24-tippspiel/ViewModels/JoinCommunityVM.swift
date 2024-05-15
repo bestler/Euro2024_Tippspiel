@@ -21,7 +21,9 @@ class JoinCommunityVM {
 
     func createCommunity() {
 
-        let url = URL(string: "http://localhost:8080/communities/create")!
+        var components = Settings.getBaseURLComponents()
+        components.path = "/communities/create"
+        let url = components.url!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -53,9 +55,13 @@ class JoinCommunityVM {
     }
 
     func joinCommunity() {
-        //TODO: Replace with real User-ID
-        let url = URL(string: "http://localhost:8080/users/92ffea16-848c-45fc-887b-7a713203caf9/joinCommunityByName/\(joinCommunityName)")!
-        print(url.absoluteString)
+        
+        guard let userID = Settings.getUserID() else {return}
+
+        var components = Settings.getBaseURLComponents()
+        components.path = "/users/\(userID)/joinCommunityByName/\(joinCommunityName)"
+        let url = components.url!
+
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")

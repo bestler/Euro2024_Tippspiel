@@ -20,10 +20,14 @@ class BetVM {
         self.bets = []
     }
 
-    //TODO: Use User-ID from AppStorage
-
     func loadBets() throws {
-        let url = URL(string: "http://localhost:8080/users/92ffea16-848c-45fc-887b-7a713203caf9/bets")!
+
+        var components = Settings.getBaseURLComponents()
+
+        guard let userID = Settings.getUserID() else {return}
+        components.path = "/users/\(userID)/bets"
+
+        let url = components.url!
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
@@ -56,11 +60,14 @@ class BetVM {
 
     }
 
-
-    //TODO: Use User-ID from AppStorage
     func saveBets() throws {
-        let url = URL(string: "http://localhost:8080/bets/update")!
-        var request = URLRequest(url: url)
+
+        var components = Settings.getBaseURLComponents()
+
+        guard let userID = Settings.getUserID() else {return}
+        components.path = "/users/\(userID)/bets/update"
+
+        var request = URLRequest(url: components.url!)
         request.httpMethod = "PUT"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 

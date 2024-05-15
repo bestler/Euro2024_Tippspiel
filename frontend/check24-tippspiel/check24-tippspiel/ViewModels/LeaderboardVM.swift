@@ -10,17 +10,35 @@ import Foundation
 @Observable
 class LeaderboardVM {
 
-    var selectedPaginationSize: Int = 10
-    var showMoreBottonUp = false
-    var showMoreButtonDown = false
-    var rowOfUser : Int?
+    let userID: UUID
+    var selectedPaginationSize: Int
+    var showMoreBottonUp: Bool
+    var showMoreButtonDown: Bool
+    var rowOfUser: Int?
     var curUp: Int?
-    var curDown = 3
+    var curDown: Int
     var lastRow: Int?
     var leaderBoardEntries = [GlobalLeaderboardEntry]()
+    var loadURL: String
+    var refetchURL: String
 
-    var loadURL = "http://localhost:8080/globalleaderboard/92ffea16-848c-45fc-887b-7a713203caf9"
-    var refetchURL = "http://localhost:8080/globalleaderboard/92ffea16-848c-45fc-887b-7a713203caf9/refetch"
+    init() {
+        userID = Settings.getUserID() ?? UUID()
+
+        var loadComponents = Settings.getBaseURLComponents()
+        loadComponents.path = "/globalleaderboard/\(userID)"
+
+        var refetchComponents = Settings.getBaseURLComponents()
+        refetchComponents.path = "/globalleaderboard/\(userID)/refetch"
+
+        self.loadURL = loadComponents.url!.absoluteString
+        self.refetchURL = refetchComponents.url!.absoluteString
+        self.showMoreBottonUp = false
+        self.showMoreButtonDown = false
+        self.selectedPaginationSize = 10
+        self.leaderBoardEntries = []
+        self.curDown = 3
+    }
 
     func loadEntries() {
 
@@ -110,10 +128,11 @@ class LeaderboardVM {
 
     func addFriend(friendId: UUID) {
 
-        //TODO: Check with actual logged in user
-        guard friendId != UUID(uuidString: "92ffea16-848c-45fc-887b-7a713203caf9") else {return}
+        guard friendId != userID else {return}
 
-        let url = URL(string: "http://localhost:8080/users/92ffea16-848c-45fc-887b-7a713203caf9/addFriend/\(friendId)")!
+        var components = Settings.getBaseURLComponents()
+        components.path = "/users/\(userID)/addFriend/\(friendId)"
+        let url = components.url!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
 
@@ -164,7 +183,7 @@ class LeaderboardVM {
     func findUserRow(entries: [GlobalLeaderboardEntry]) {
 
         for entry in entries {
-            if entry.id == UUID(uuidString: "92ffea16-848c-45fc-887b-7a713203caf9")! {
+            if entry.id == userID {
                 rowOfUser = entry.row
                 curUp = entry.row
             }
