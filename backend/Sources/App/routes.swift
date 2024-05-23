@@ -16,6 +16,7 @@ func routes(_ app: Application) throws {
     try app.register(collection: BetController())
     try app.register(collection: CommunityController())
     try app.register(collection: GlobalLeaderboardController())
+    try app.register(collection: DashboardController())
 
 
     app.get { req async in

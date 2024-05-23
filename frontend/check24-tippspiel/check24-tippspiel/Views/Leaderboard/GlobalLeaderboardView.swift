@@ -48,14 +48,14 @@ struct GlobalLeaderboardView: View {
 
 struct BackgroundColor: View {
 
-    let entry: GlobalLeaderboardEntry
+    let entry: LeaderboardEntry
     let rowUser: Int
     let rowLast: Int
 
     var body: some View {
         if entry.row == rowUser {
             Color("BackgroundBlue")
-        } else if entry.isfriend {
+        } else if entry.isfriend ?? false {
             Color("BackgroundYellow")
         } else if entry.row <= 3 {
             Color("BackgroundGreen")

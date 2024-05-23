@@ -14,6 +14,7 @@ struct BetRow: View {
 
     var body: some View {
 
+
         Section(header: Text((bet.match.game_starts_at.formatted()))) {
             HStack {
                 Text((bet.match.team_home_name) + " - " + (bet.match.team_away_name))

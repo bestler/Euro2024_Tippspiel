@@ -10,7 +10,7 @@ import SwiftUI
 struct GlobalLeaderboardSearch: View {
 
     @State private var searchText = ""
-    @State private var entries = [GlobalLeaderboardEntry]()
+    @State private var entries = [LeaderboardEntry]()
 
     var body: some View {
 
@@ -29,7 +29,7 @@ struct GlobalLeaderboardSearch: View {
                     }
                 }
                 ForEach(entries) { entry in
-                    GlobalLeaderboardRow(entry: entry)
+                    LeaderboardRow(entry: entry)
                         .onTapGesture {
                             addFriend(friendId: entry.id)
                         }
@@ -73,7 +73,7 @@ struct GlobalLeaderboardSearch: View {
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .iso8601
 
-                let decodedData = try decoder.decode([GlobalLeaderboardEntry].self, from: data!)
+                let decodedData = try decoder.decode([LeaderboardEntry].self, from: data!)
                 self.entries = decodedData
                 print(decodedData)
             } catch {

@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct GlobalLeaderboardRow: View {
+struct LeaderboardRow: View {
 
-    let entry: GlobalLeaderboardEntry
+    let entry: LeaderboardEntry
 
     var body: some View {
         HStack() {
@@ -24,5 +24,5 @@ struct GlobalLeaderboardRow: View {
 }
 
 #Preview {
-    GlobalLeaderboardRow(entry: GlobalLeaderboardEntry(id: UUID(), rank: 1, name: "Simon", points: 100, row: 1, isfriend: false))
+    LeaderboardRow(entry: LeaderboardEntry(id: UUID(), rank: 1, name: "Simon", points: 100, row: 1, isfriend: false))
 }

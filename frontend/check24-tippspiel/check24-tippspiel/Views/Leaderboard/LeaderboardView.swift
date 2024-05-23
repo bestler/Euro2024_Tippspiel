@@ -50,7 +50,7 @@ struct LeaderboardView<LeaderBoardType>: View where LeaderBoardType: Leaderboard
                         ShowMoreButton(isUp: true, action: leaderboardVM.handleShowMoreButton)
                     }
                     
-                    GlobalLeaderboardRow(entry: entry)
+                    LeaderboardRow(entry: entry)
                         .onTapGesture {
                             leaderboardVM.addFriend(friendId: entry.id)
                         }

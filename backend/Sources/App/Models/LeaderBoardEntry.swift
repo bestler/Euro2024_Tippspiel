@@ -29,8 +29,8 @@ final class LeaderBoardEntry: Model, Content {
     @Field(key: "row")
     var row: Int
 
-    @Field(key: "isfriend")
-    var isfriend: Bool
+    @OptionalField(key: "isfriend")
+    var isfriend: Bool?
 
     @Parent(key: "id")
     var user: User
@@ -94,6 +94,34 @@ final class LeaderBoardEntry: Model, Content {
         return result
 
     }
+
+    static func sneakPeekGlobalLeaderboardForUser(userId: UUID, db: Database) async throws -> [LeaderBoardEntry] {
+
+        var result: [LeaderBoardEntry] = []
+
+        if let sqldb = db as? SQLDatabase {
+            let queryString = #"select * FROM sneakPeekGlobal('\#(userId.uuidString)')"#
+            let query = SQLQueryString(queryString)
+            result = try await sqldb.raw(query).all(decoding: LeaderBoardEntry.self)
+        }
+
+        return result
+    }
+
+
+    static func sneakPeekCommunityLeaderboardForUser(userId: UUID, communityId: UUID, db: Database) async throws -> [LeaderBoardEntry] {
+
+        var result: [LeaderBoardEntry] = []
+
+        if let sqldb = db as? SQLDatabase {
+            let queryString = #"select * FROM sneakPeekCommunity('\#(communityId.uuidString)','\#(userId.uuidString)')"#
+            let query = SQLQueryString(queryString)
+            result = try await sqldb.raw(query).all(decoding: LeaderBoardEntry.self)
+        }
+
+        return result
+    }
+
 
 }
 

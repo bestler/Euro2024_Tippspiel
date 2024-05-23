@@ -27,7 +27,7 @@ struct MainView: View {
 
     var body: some View {
             TabView {
-                BetView()
+                DashboardView()
                     .tabItem {
                         Label("Dashboard", systemImage: "newspaper")
                     }

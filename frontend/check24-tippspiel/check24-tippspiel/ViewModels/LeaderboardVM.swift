@@ -18,7 +18,7 @@ class LeaderboardVM {
     var curUp: Int?
     var curDown: Int
     var lastRow: Int?
-    var leaderBoardEntries = [GlobalLeaderboardEntry]()
+    var leaderBoardEntries = [LeaderboardEntry]()
     var loadURL: String
     var refetchURL: String
 
@@ -62,7 +62,7 @@ class LeaderboardVM {
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .iso8601
 
-                let decodedData = try decoder.decode([GlobalLeaderboardEntry].self, from: data!)
+                let decodedData = try decoder.decode([LeaderboardEntry].self, from: data!)
                 self.processLoadedEntries(entries: decodedData)
                 self.findUserRow(entries: decodedData)
                 self.evaluatePossiblePosUpDown()
@@ -112,7 +112,7 @@ class LeaderboardVM {
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .iso8601
 
-                let decodedData = try decoder.decode([GlobalLeaderboardEntry].self, from: data!)
+                let decodedData = try decoder.decode([LeaderboardEntry].self, from: data!)
                 self.processLoadedEntries(entries: decodedData)
                 self.evaluatePossiblePosUpDown()
 
@@ -180,7 +180,7 @@ class LeaderboardVM {
         }
     }
 
-    func findUserRow(entries: [GlobalLeaderboardEntry]) {
+    func findUserRow(entries: [LeaderboardEntry]) {
 
         for entry in entries {
             if entry.id == userID {
@@ -190,7 +190,7 @@ class LeaderboardVM {
         }
     }
 
-    func processLoadedEntries (entries: [GlobalLeaderboardEntry]){
+    func processLoadedEntries (entries: [LeaderboardEntry]){
 
         leaderBoardEntries = entries
         //Array is sorted, so last element is last row

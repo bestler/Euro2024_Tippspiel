@@ -7,23 +7,14 @@
 
 import Foundation
 
-struct GlobalLeaderboardEntry: Identifiable, Codable {
+struct LeaderboardEntry: Identifiable, Codable {
 
     let id: UUID
     let rank: Int
     let name: String
     let points: Int
     let row: Int
-    let isfriend: Bool
+    let isfriend: Bool?
 }
-
-/*
-struct LeaderBoardDTO: Codable {
-
-    let items: [GlobalLeaderboardEntry]
-    let totalCount: Int
-
-}
- */
 
 
