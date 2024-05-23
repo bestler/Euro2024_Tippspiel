@@ -79,6 +79,12 @@ struct UserController: RouteCollection {
         user.created_at = Date()
         try await user.create(on: req.db)
         try await createBetsForNewUser(userID: user.requireID(), db: req.db)
+
+        guard let sqlDB = req.db as? SQLDatabase else {
+            throw Abort(.internalServerError, reason: "DB Error")
+        }
+        try await Utilities.refreshMaterialiedView(viewName: "leaderboard", db: sqlDB)
+
         return user
     }
 
@@ -106,6 +112,12 @@ struct UserController: RouteCollection {
 
         try await userCommunity.save(on: req.db)
 
+        guard let sqlDB = req.db as? SQLDatabase else {
+            throw Abort(.internalServerError, reason: "DB Error")
+        }
+        try await Utilities.refreshMaterialiedView(viewName: "community_view", db: sqlDB)
+
+
         return .ok
     }
 
@@ -129,6 +141,11 @@ struct UserController: RouteCollection {
         userCommunity.$community.id = community.id!
 
         try await userCommunity.save(on: req.db)
+
+        guard let sqlDB = req.db as? SQLDatabase else {
+            throw Abort(.internalServerError, reason: "DB Error")
+        }
+        try await Utilities.refreshMaterialiedView(viewName: "community_view", db: sqlDB)
 
         return .ok
     }

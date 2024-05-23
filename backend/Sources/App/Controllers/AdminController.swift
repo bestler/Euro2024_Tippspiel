@@ -43,6 +43,8 @@ struct AdminController: RouteCollection {
     private func updatePoints(match_id: UUID, db: Database) async throws {
         if let postgres = db as? PostgresDatabase {
             _ = try await postgres.simpleQuery("CALL updatepointsbets('\(match_id.uuidString)')").get()
+            try await Utilities.refreshMaterialiedView(viewName: "leaderboard", db: postgres as! SQLDatabase)
+            try await Utilities.refreshMaterialiedView(viewName: "community_view", db: postgres as! SQLDatabase)
         }
     }
 
