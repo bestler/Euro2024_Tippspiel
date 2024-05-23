@@ -20,7 +20,7 @@ class BetVM {
         self.bets = []
     }
 
-    func loadBets() throws {
+    func loadBets() {
 
         var components = Settings.getBaseURLComponents()
 

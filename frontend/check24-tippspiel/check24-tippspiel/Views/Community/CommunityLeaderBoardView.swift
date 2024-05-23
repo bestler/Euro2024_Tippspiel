@@ -42,6 +42,11 @@ struct CommunityLeaderBoardView: View {
             }
             .background(Color(UIColor.systemGroupedBackground))
             .onAppear{
+                if communityVM.communities.isEmpty {
+                    communityVM.loadCommunities()
+                }
+            }
+            .refreshable {
                 communityVM.loadCommunities()
             }
             .sheet(isPresented: $showJoinCreateSheet, onDismiss: {

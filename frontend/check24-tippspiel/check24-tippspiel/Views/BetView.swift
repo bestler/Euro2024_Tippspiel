@@ -43,12 +43,12 @@ struct BetView: View {
                 .navigationBarTitleDisplayMode(/*@START_MENU_TOKEN@*/.automatic/*@END_MENU_TOKEN@*/)
             }
             .onAppear {
-                do {
-                    try betVM.loadBets()
+                if betVM.bets.isEmpty {
+                    betVM.loadBets()
                 }
-                catch {
-                    print(error)
-                }
+            }
+            .refreshable {
+                betVM.loadBets()
             }
         }
 

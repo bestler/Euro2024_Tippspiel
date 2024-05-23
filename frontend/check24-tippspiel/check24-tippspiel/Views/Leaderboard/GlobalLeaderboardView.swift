@@ -37,10 +37,14 @@ struct GlobalLeaderboardView: View {
             }
             .background(Color(UIColor.systemGroupedBackground))
             .onAppear {
-                if leaderboardVM.leaderBoardEntries.count == 0 {
+                if leaderboardVM.leaderBoardEntries.isEmpty{
                     leaderboardVM.loadEntries()
                 }
             }
+            .refreshable {
+                leaderboardVM.loadEntries()
+            }
+
         }
     }
 }

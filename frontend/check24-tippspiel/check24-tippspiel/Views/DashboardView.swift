@@ -44,7 +44,15 @@ struct DashboardView: View {
             .navigationBarTitleDisplayMode(.large)
         }
         .onAppear {
-            dashboardVM.getUser()
+            // Load only on the first appearance
+            if dashboardVM.standing == nil {
+                dashboardVM.getUser()
+                dashboardVM.loadUpcoming()
+                dashboardVM.loadStanding()
+                dashboardVM.loadLeaderboards()
+            }
+        }
+        .refreshable {
             dashboardVM.loadUpcoming()
             dashboardVM.loadStanding()
             dashboardVM.loadLeaderboards()
