@@ -41,13 +41,17 @@ class CommunityLeaderboardVM: LeaderboardVM {
 
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
 
-            let statusCode = (response as! HTTPURLResponse).statusCode
 
+            var statusCode = 500
+            if let response {
+                statusCode = (response as! HTTPURLResponse).statusCode
+            } else {
+                return
+            }
             guard statusCode == 200 && data != nil else {
                 print("Error with statusCode \(statusCode)")
                 return
             }
-
             do {
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .iso8601

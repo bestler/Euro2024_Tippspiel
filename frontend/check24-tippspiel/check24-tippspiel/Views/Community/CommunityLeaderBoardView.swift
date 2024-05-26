@@ -40,7 +40,6 @@ struct CommunityLeaderBoardView: View {
                     LeaderboardView(communityLeaderboardBM: $communityVM)
                 }
             }
-            .background(Color(UIColor.systemGroupedBackground))
             .onAppear{
                 if communityVM.communities.isEmpty {
                     communityVM.loadCommunities()
@@ -69,6 +68,7 @@ struct CommunityLeaderBoardView: View {
                 }
             }
         }
+        .background(Color(UIColor.systemGroupedBackground))
 
     }
 }

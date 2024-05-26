@@ -43,9 +43,11 @@ struct MainView: View {
                     .tabItem {
                         Label("Community", systemImage: "person.3")
                     }
+
             }.fullScreenCover(isPresented: $isShowLogin) {
                 LoginView()
             }
+
         }
 
     }
