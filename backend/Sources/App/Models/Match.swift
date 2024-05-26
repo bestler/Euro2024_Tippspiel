@@ -34,8 +34,5 @@ final class Match: Model, Content {
     @Children(for: \.$match)
     var bets: [Bet]
 
-    var dateHumanReadable: String {
-        return game_starts_at.formatted()
-    }
 
 }

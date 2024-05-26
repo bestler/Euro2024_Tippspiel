@@ -10,7 +10,7 @@ public func configure(_ app: Application) async throws {
     // register routes
 
     //Configure DB
-    let configuration = try! SQLPostgresConfiguration(url: "postgresql://admin:admin@localhost/check24_tippsspiel")
+    let configuration = try! SQLPostgresConfiguration(url: "postgresql://admin:admin@db/check24_tippspiel")
     app.databases.use(.postgres(configuration: configuration), as: .psql)
     
     //Leaf for HTML Admin Panel
