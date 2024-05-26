@@ -11,21 +11,21 @@ import Foundation
 class DashbaordVM {
 
 
-    let userID: UUID
+    var userID: UUID?
     private var user: User?
     var leaderBoardDict: [String:[LeaderboardEntry]]
     var upcomingMatch: Match?
     var standing: LeaderboardEntry?
-    var username: String {
+    var username: String? {
         if let user {
             return user.name
         } else {
-            return ""
+            return nil
         }
     }
 
     init() {
-        self.userID = Settings.getUserID() ?? UUID()
+        self.userID = Settings.getUserID()
         self.leaderBoardDict = [String:[LeaderboardEntry]]()
     }
 
@@ -63,6 +63,8 @@ class DashbaordVM {
     func loadStanding() {
 
         var components = Settings.getBaseURLComponents()
+
+        guard let userID else {return}
         components.path = "/dashboard/standing/\(userID)"
 
         let request = URLRequest(url: components.url!)
@@ -94,6 +96,7 @@ class DashbaordVM {
     func loadLeaderboards() {
 
         var components = Settings.getBaseURLComponents()
+        guard let userID else {return}
         components.path = "/dashboard/leaderboards/\(userID)"
 
         let request = URLRequest(url: components.url!)
@@ -127,6 +130,8 @@ class DashbaordVM {
     func getUser() {
 
         var components = Settings.getBaseURLComponents()
+        guard let userID = Settings.getUserID() else {return}
+        self.userID = userID
         components.path = "/users/\(userID)"
 
         let request = URLRequest(url: components.url!)

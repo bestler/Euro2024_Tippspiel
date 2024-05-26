@@ -9,7 +9,7 @@ import SwiftUI
 
 struct DashboardView: View {
 
-    @State private var dashboardVM = DashbaordVM()
+    @State var dashboardVM = DashbaordVM()
 
     var body: some View {
         NavigationStack {
@@ -40,19 +40,24 @@ struct DashboardView: View {
                     }
                 }
             }
-            .navigationTitle("Hello, \(dashboardVM.username)!")
+            .navigationTitle("Hello, \(dashboardVM.username ?? "")!")
             .navigationBarTitleDisplayMode(.large)
         }
         .onAppear {
-            // Load only on the first appearance
-            if dashboardVM.standing == nil {
+            if dashboardVM.username == nil {
                 dashboardVM.getUser()
+            }
+            // Load only on the first appearance
+            if dashboardVM.leaderBoardDict.keys.isEmpty {
                 dashboardVM.loadUpcoming()
                 dashboardVM.loadStanding()
                 dashboardVM.loadLeaderboards()
             }
         }
         .refreshable {
+            if dashboardVM.username == nil {
+                dashboardVM.getUser()
+            }
             dashboardVM.loadUpcoming()
             dashboardVM.loadStanding()
             dashboardVM.loadLeaderboards()

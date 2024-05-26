@@ -9,13 +9,18 @@ import SwiftUI
 
 struct MainView: View {
 
+    var dashboardView: DashboardView
+
     init() {
-        
+
         // Check if a userID is already stored inside User Defaults
         let isUserLoggedIn = UserDefaults.standard.object(forKey: "userID") != nil
 
+
+        self.dashboardView = DashboardView()
+
         // Show Login Screen, if User is not already signed-in
-        
+
         if isUserLoggedIn {
             self._isShowLogin = State(wrappedValue: false)
         } else {
@@ -26,31 +31,38 @@ struct MainView: View {
     @State private var isShowLogin: Bool
 
     var body: some View {
-            TabView {
-                DashboardView()
-                    .tabItem {
-                        Label("Dashboard", systemImage: "newspaper")
-                    }
-                BetView()
-                    .tabItem {
-                        Label("Bets", systemImage: "sportscourt")
-                    }
-                GlobalLeaderboardView()
-                    .tabItem {
-                        Label("Leaderboard", systemImage: "trophy")
-                    }
-                CommunityLeaderBoardView()
-                    .tabItem {
-                        Label("Community", systemImage: "person.3")
-                    }
+        TabView {
+            dashboardView
+                .tabItem {
+                    Label("Dashboard", systemImage: "newspaper")
+                }
+            BetView()
+                .tabItem {
+                    Label("Bets", systemImage: "sportscourt")
+                }
+            GlobalLeaderboardView()
+                .tabItem {
+                    Label("Leaderboard", systemImage: "trophy")
+                }
+            CommunityLeaderBoardView()
+                .tabItem {
+                    Label("Community", systemImage: "person.3")
+                }
 
-            }.fullScreenCover(isPresented: $isShowLogin) {
-                LoginView()
-            }
-
+        }.fullScreenCover(isPresented: $isShowLogin, onDismiss: {
+            dashboardView.dashboardVM.getUser()
+            dashboardView.dashboardVM.loadUpcoming()
+            dashboardView.dashboardVM.loadStanding()
+            dashboardView.dashboardVM.loadLeaderboards()
+        }, content: {
+            LoginView()
         }
+        )
 
     }
+
+
+}
 
 #Preview {
     MainView()
