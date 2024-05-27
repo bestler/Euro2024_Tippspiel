@@ -62,7 +62,14 @@ struct GlobalLeaderboardController: RouteCollection {
         
         guard var username = req.parameters.get("user_name") else { throw Abort(.notFound) }
         username = username.lowercased()
-        let entries = try await LeaderBoardEntry.query(on: req.db).filter(\.$name ~~ username).all()
+        let entries = try await LeaderBoardEntry.query(on: req.db)
+            .filter(\.$name ~~ username)
+            .field(\.$id)
+            .field(\.$rank)
+            .field(\.$name)
+            .field(\.$points)
+            .field(\.$row)
+            .all()
 
         return entries
 

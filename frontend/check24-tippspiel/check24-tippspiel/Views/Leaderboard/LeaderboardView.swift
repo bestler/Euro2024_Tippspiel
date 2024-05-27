@@ -46,7 +46,7 @@ struct LeaderboardView<LeaderBoardType>: View where LeaderBoardType: Leaderboard
                 
                 ForEach(leaderboardVM.leaderBoardEntries) { entry in
                     
-                    if entry.row == leaderboardVM.curUp && leaderboardVM.showMoreBottonUp {
+                    if entry.row == leaderboardVM.curUp && leaderboardVM.showMoreButtonUp {
                         ShowMoreButton(isUp: true, action: leaderboardVM.handleShowMoreButton)
                     }
                     

@@ -42,7 +42,7 @@ struct GlobalLeaderboardView: View {
                 }
             }
             .refreshable {
-                leaderboardVM.loadEntries()
+                leaderboardVM.handleRefresh()
             }
 
         }

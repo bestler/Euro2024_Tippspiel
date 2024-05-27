@@ -10,9 +10,9 @@ import Foundation
 @Observable
 class LeaderboardVM {
 
-    let userID: UUID
+    var userID: UUID?
     var selectedPaginationSize: Int
-    var showMoreBottonUp: Bool
+    var showMoreButtonUp: Bool
     var showMoreButtonDown: Bool
     var rowOfUser: Int?
     var curUp: Int?
@@ -23,17 +23,17 @@ class LeaderboardVM {
     var refetchURL: String
 
     init() {
-        userID = Settings.getUserID() ?? UUID()
+        userID = Settings.getUserID()
 
         var loadComponents = Settings.getBaseURLComponents()
-        loadComponents.path = "/globalleaderboard/\(userID)"
+        loadComponents.path = "/globalleaderboard/\(Settings.getUserID()?.uuidString ?? "")"
 
         var refetchComponents = Settings.getBaseURLComponents()
-        refetchComponents.path = "/globalleaderboard/\(userID)/refetch"
+        refetchComponents.path = "/globalleaderboard/\(Settings.getUserID()?.uuidString ?? "")/refetch"
 
         self.loadURL = loadComponents.url!.absoluteString
         self.refetchURL = refetchComponents.url!.absoluteString
-        self.showMoreBottonUp = false
+        self.showMoreButtonUp = false
         self.showMoreButtonDown = false
         self.selectedPaginationSize = 10
         self.leaderBoardEntries = []
@@ -41,6 +41,11 @@ class LeaderboardVM {
     }
 
     func loadEntries() {
+        
+        //Necessary, because if User logged in for the first time, userID is not correctly set because class is initialized before UserID is set in UserDefaults
+        if userID == nil {
+            updatePath()
+        }
 
         let url = URL(string: loadURL)!
         let request = URLRequest(url: url)
@@ -131,7 +136,7 @@ class LeaderboardVM {
         guard friendId != userID else {return}
 
         var components = Settings.getBaseURLComponents()
-        components.path = "/users/\(userID)/addFriend/\(friendId)"
+        components.path = "/users/\(userID?.uuidString ?? "")/addFriend/\(friendId)"
         let url = components.url!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -166,19 +171,24 @@ class LeaderboardVM {
 
 
     func evaluatePossiblePosUpDown() {
-
-        if let curUp, curUp > curDown + 1 {
-            showMoreBottonUp = true
-        } else {
-            showMoreBottonUp = false
-        }
-
-        if let curUp, curDown < curUp - 1 {
-            showMoreButtonDown = true
-        } else {
+        guard let curUp = curUp else {
+            showMoreButtonUp = false
             showMoreButtonDown = false
+            return
         }
+
+        // Special case where curUp is exactly 1 more than curDown
+        if curUp == curDown + 1 {
+            showMoreButtonUp = false
+            showMoreButtonDown = false
+            return
+        }
+
+        // General case
+        showMoreButtonUp = curUp > curDown
+        showMoreButtonDown = curDown < curUp
     }
+
 
     func findUserRow(entries: [LeaderboardEntry]) {
 
@@ -197,6 +207,24 @@ class LeaderboardVM {
         if leaderBoardEntries.count > 0 {
             lastRow = leaderBoardEntries[leaderBoardEntries.count - 1].row
         }
+    }
+
+    func updatePath() {
+        self.userID = Settings.getUserID()
+        var loadComponents = Settings.getBaseURLComponents()
+        loadComponents.path = "/globalleaderboard/\(Settings.getUserID()?.uuidString ?? "")"
+
+        var refetchComponents = Settings.getBaseURLComponents()
+        refetchComponents.path = "/globalleaderboard/\(Settings.getUserID()?.uuidString ?? "")/refetch"
+
+        self.loadURL = loadComponents.url!.absoluteString
+        self.refetchURL = refetchComponents.url!.absoluteString
+    }
+
+    func handleRefresh() {
+        curDown = 3
+        curUp = rowOfUser
+        loadEntries()
     }
 
 }

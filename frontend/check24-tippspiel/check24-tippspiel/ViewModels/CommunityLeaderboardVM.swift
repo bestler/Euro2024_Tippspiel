@@ -83,5 +83,11 @@ class CommunityLeaderboardVM: LeaderboardVM {
         self.refetchURL = refetchComponents.url!.absoluteString
     }
 
+    override func handleRefresh() {
+        loadCommunities()
+        super.handleRefresh()
+    }
+
+
 
 }

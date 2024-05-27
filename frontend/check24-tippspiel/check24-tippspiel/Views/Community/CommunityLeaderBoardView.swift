@@ -47,7 +47,7 @@ struct CommunityLeaderBoardView: View {
                 }
             }
             .refreshable {
-                communityVM.loadCommunities()
+                communityVM.handleRefresh()
             }
             .sheet(isPresented: $showJoinCreateSheet, onDismiss: {
                 communityVM.loadCommunities()
