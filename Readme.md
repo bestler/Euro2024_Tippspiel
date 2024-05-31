@@ -4,7 +4,7 @@
 
 ## Table of Contents
 
-1. [Introduction](#introduction)
+1. [Introduction]()
 2. [Features](#features)
 3. [Architecture](#architecture)
 4. [Frontend (iOS)](#frontend-ios)
@@ -45,10 +45,10 @@ It uses a classic client-server architecture, where the client (iOS app) communi
 ## Frontend (iOS)
 
 #### Screenshots
-<img src="docs/DashboardView.png" width="25%" align="left">
-<img src="docs/BetView.png" width="25%" align="left">
-<img src="docs/LeaderboardView.png" width="25%" align="left">
-<img src="docs/CommunityLeaderboardView.png" width="25%" align="left">
+<img src="docs/DashboardView.png" width="23%" align="left">
+<img src="docs/BetView.png" width="23%" align="left">
+<img src="docs/LeaderboardView.png" width="23%" align="left">
+<img src="docs/CommunityLeaderboardView.png" width="23%" align="left">
 <br clear="left"/>
 <br/>
 
