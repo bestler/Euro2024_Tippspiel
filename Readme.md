@@ -45,10 +45,10 @@ It uses a classic client-server architecture, where the client (iOS app) communi
 ## Frontend (iOS)
 
 #### Screenshots
-<img src="docs/DashboardView.png" width="23%" align="left">
-<img src="docs/BetView.png" width="23%" align="left">
-<img src="docs/LeaderboardView.png" width="23%" align="left">
-<img src="docs/CommunityLeaderboardView.png" width="23%" align="left">
+<img src="docs/DashboardView.png" width="20%" align="left">
+<img src="docs/BetView.png" width="20%" align="left">
+<img src="docs/LeaderboardView.png" width="20%" align="left">
+<img src="docs/CommunityLeaderboardView.png" width="20%" align="left">
 <br clear="left"/>
 <br/>
 
