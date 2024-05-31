@@ -20,8 +20,9 @@
     - [Features](#features-1)
     - [Sample Function: Query for Points Calculation](#sample-function-query-for-points-calculation)
 7. [Installation](#installation)
-8. [License](#license)
-
+8. [Possible Improvements](#possible-improvements)
+9. [Demo](#demo)
+10. [License](#license)
 
 ## Features
 
@@ -101,21 +102,20 @@ As one of the requirements was that the application remains performant with a hi
 create procedure updatepointsbets(IN for_match_id uuid)
     language sql
 BEGIN ATOMIC
-UPDATE bets b
-SET points = CASE WHEN -- Correct result
-    m.team_away_goals = b.goals_away AND m.team_home_goals = b.goals_home
-    THEN 8
-    WHEN -- Correct goal difference
-        (m.team_away_goals - m.team_home_goals) = (b.goals_away - b.goals_home) AND
-        b.goals_home != b.goals_away -- No draw
-    THEN 6
-    WHEN -- Correct winner
-        (m.team_away_goals - m.team_home_goals) >= 0 AND (b.goals_away - b.goals_home) >= 0 OR
-        (m.team_away_goals - m.team_home_goals) <= 0 AND (b.goals_away - b.goals_home) <= 0
-    THEN 4
-    ELSE 0 -- Wrong result
-END
-FROM matches m, users u
+ UPDATE bets b SET points =
+         CASE
+            -- Correct result
+             WHEN ((m.team_away_goals = b.goals_away) AND (m.team_home_goals = b.goals_home)) THEN 8
+             -- Correct goal difference (not draw)
+             WHEN (((m.team_away_goals - m.team_home_goals) = (b.goals_away - b.goals_home)) AND (b.goals_home <> b.goals_away)) THEN 6
+             -- Correct winner
+             WHEN ((((m.team_away_goals - m.team_home_goals) > 0) AND ((b.goals_away - b.goals_home) > 0)) OR (((m.team_away_goals - m.team_home_goals) < 0) AND ((b.goals_away - b.goals_home) < 0))) THEN 4
+             -- Correct draw 
+             WHEN (((m.team_away_goals - m.team_home_goals) = 0) AND ((b.goals_away - b.goals_home) = 0)) THEN 4
+             ELSE 0
+         END
+    FROM matches m,
+     users u
    WHERE ((m.id = b.match_id) AND (u.id = b.user_id) AND (m.id = updatepointsbets.for_match_id));
 END;
 ```
@@ -134,6 +134,16 @@ The entire project is containerized, allowing you to run the whole project with 
 
 The database is initialized based on the `init.sql` file. This sets up the schema and loads sample data so you can start immediately. If this data is not needed, simply adjust the initialization file and delete the COPY statements. Random results for the games are already entered, so you can see an example result.
 
+## Possible Improvements
+
+- [ ] Tests: Currently, there are no tests. This should be improved.
+- [ ] Error handling: Currently, the error handling is very basic. More detailed error messages should be returned to the client.
+- [ ] More features: More features could be added, such as a chat, more statistics, or a more detailed user profile. Also the possibiblity to logout, leave a community or to unpinn a friend could be added.
+- [ ] More admin features: The admin area could be extended with more features, such as user management or community management. The UI could be improved.
+
+## Demo
+
+A demo video can be found [here](https://youtu.be/SrsNCU1xj_s).
 
 ## License
 This project is licensed under the MIT License.
