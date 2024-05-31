@@ -64,8 +64,7 @@ class BetVM {
 
         var components = Settings.getBaseURLComponents()
 
-        guard let userID = Settings.getUserID() else {return}
-        components.path = "/users/\(userID)/bets/update"
+        components.path = "/bets/update"
 
         var request = URLRequest(url: components.url!)
         request.httpMethod = "PUT"
